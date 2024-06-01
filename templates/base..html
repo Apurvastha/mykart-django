@@ -36,6 +36,12 @@
 $(document).ready(function() {
 	// jQuery code
 
+	setTimeout(function(){
+        $('#message').fadeOut('slow', function() {
+            console.log("Message faded out");
+        });
+    }, 4000);
+	
 }); 
 // jquery end
 </script>
