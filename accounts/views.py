@@ -11,6 +11,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
+from django.http import HttpResponse
+
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -43,8 +46,9 @@ def register(request):
             send_email.send()
 
 
-            messages.success(request, 'Registration Successful')
-            return redirect('register')
+            # messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify it.')
+            return redirect('/accounts/login/?command=verification&email='+email)
+            
     else:
         form = RegistrationForm()
 
@@ -77,5 +81,22 @@ def logout(request):
     messages.success(request, 'You are logged out!')
     return render(request, 'accounts/login.html')
 
-def activate(request):
-    return
+#========================USER ACCOUNT ACTIVATION!==============================================
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = Account._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
+        user = None
+
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Congratulations! Your account is activated!')
+        return redirect('login')
+    else:
+        messages.error(request, 'Invalid activation link')
+        return redirect('register')
+    
