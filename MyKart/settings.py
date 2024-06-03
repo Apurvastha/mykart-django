@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'MyKart.middlewares.AdminSessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -158,3 +159,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'thacres.tc@gmail.com'
 EMAIL_HOST_PASSWORD = 'pcbw hptt nhno qpac'
 EMAIL_USE_TLS = True
+
+
+# # settings.py
+
+# # Session settings for the e-commerce site
+# SESSION_COOKIE_NAME = 'ecommerce_sessionid'
+
+# # Admin session settings
+# ADMIN_SESSION_COOKIE_NAME = 'admin_sessionid'
+
