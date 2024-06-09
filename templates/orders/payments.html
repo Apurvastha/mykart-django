@@ -46,6 +46,7 @@
                         </tr>
                         </thead>
                         <tbody>
+                            
                         {% for cart_item in cart_items %}
                         <tr>
                             <td>
@@ -103,9 +104,17 @@
                 <p class="text-center mb-3">
                     <img src="{% static "./images/misc/payments.png" %}" height="26">
                 </p>
-                <a href="{% url 'checkout' %}" class="btn btn-primary btn-block"> Make Payment </a>
+                <form action="{% url 'payments' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="purchase_order_id" value="{{ purchase_order_id }}">
+                    <input type="hidden" name="amount" value="{{ grand_total }}">
+                    <input type="hidden" name="return_url" value="http://127.0.0.1:8000/accounts">   
+                    <input type="submit" class="btn btn-primary btn-block" id="payment-button" value="Pay with Khalti">
+                </form>
+                {% comment %} <button id="payment-button" class="btn btn-primary btn-block">Pay with Khalti</button> {% endcomment %}
+                
             </div> <!-- card-body.// -->
-            </div> <!-- card.// -->
+            {% comment %} </div> <!-- card.// -->   {% endcomment %}
     
     </aside> <!-- col.// -->
     
@@ -119,7 +128,7 @@
     </section>
     <!-- ========================= SECTION CONTENT END// ========================= -->
     
-    <script>
+    {% comment %} <script>
         var config = {
             // replace the publicKey with yours
             "publicKey": "test_public_key_dc74e0fd57cb46cd93832aee0a390234",
@@ -153,7 +162,7 @@
             // minimum transaction amount must be 10, i.e 1000 in paisa.
             checkout.show({amount: 1000});
         }
-    </script>
+    </script> {% endcomment %}
     
     
 {% endblock %}
