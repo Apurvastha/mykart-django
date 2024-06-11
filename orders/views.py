@@ -1,7 +1,9 @@
 import datetime
-import os
+from django.core.mail import EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+
 import requests
 import json
 
@@ -67,6 +69,7 @@ def payments(request):
 def verify_payment(request):
 
     url = "https://a.khalti.com/api/v2/epayment/lookup/"
+
     if request.method == 'GET':
         headers = {
             'Authorization': 'key f58207f6173d4159b46014b8009889b6',
@@ -83,12 +86,7 @@ def verify_payment(request):
         print(new_res)
 
         if new_res['status'] == 'Completed':
-            # # Fetch order by purchase_order_id
-            # purchase_order_id = new_res['purchase_order_id']
-            # if not purchase_order_id:
-            #     return redirect('payment_failed')
-            # order = get_object_or_404(Order, order_number=purchase_order_id)
-
+           
             order_number = request.GET.get('purchase_order_id')
             amount = new_res.get('total_amount', 0)
 
@@ -109,32 +107,62 @@ def verify_payment(request):
             order.payment = payment
             order.save()
 
-            # # Move cart items to order products
-            # cart_items = CartItem.objects.filter(user=order.user)
-            # for item in cart_items:
-            #     order_product = OrderProduct()
-            #     order_product.order_id = order.id
-            #     order_product.payment = payment
-            #     order_product.user_id = order.user.id
-            #     order_product.product_id = item.product_id
-            #     order_product.quantity = item.quantity
-            #     order_product.product_price = item.product.price
-            #     order_product.ordered = True
-            #     order_product.save()
+            # Move cart items to order products
 
-            #     # Reduce the quantity of the sold products
-            #     product = Product.objects.get(id=item.product_id)
-            #     product.stock -= item.quantity
-            #     product.save()
+            cart_items = CartItem.objects.filter(user=request.user)
 
-            # # Clear the cart
-            # CartItem.objects.filter(user=order.user).delete()
+            for item in cart_items:
+                order_product = OrderProduct()
+                order_product.order_id = order.id
+                order_product.payment = payment
+                order_product.user_id = request.user.id
+                order_product.product_id = item.product_id
+                order_product.quantity = item.quantity
+                order_product.product_price = item.product.price
+                order_product.ordered = True
+                order_product.save()
+
+                cart_item = CartItem.objects.get(id=item.id)
+                product_variation = cart_item.variations.all()
+                order_product = OrderProduct.objects.get(id=order_product.id)
+                order_product.variations.set(product_variation)
+                order_product.save()
+
+                # Reduce the quantity of the sold products
+
+                product = Product.objects.get(id=item.product_id)
+                product.stock -= item.quantity
+                product.save()
+
+            # Clear the cart
+
+            CartItem.objects.filter(user=request.user).delete()
+
+            # send order recieved email to customer
+
+            mail_subject = 'Thank you for the order!'
+            message = render_to_string('orders/order_recieved_email.html', {
+                'user' : request.user,
+                'order' : order,
+                
+            })
+            to_email = request.user.email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+
+            # Send order number and transaction id back to sendData method via JsonRedponse
+
+            data ={
+                'order_number': order.order_number,
+                'transID': payment.payment_id,
+            }
+            return JsonResponse(data)
 
             
         else:
             pass
 
-    return redirect('accounts')
+    return redirect('dashboard')
 
 
 
@@ -200,3 +228,7 @@ def place_order(request, total=0, quantity=0):
             return render(request, 'orders/payments.html', context)
     else:
         return redirect('checkout')
+    
+    
+def order_complete(request):
+    return render(request, 'orders/order_complete.html')
