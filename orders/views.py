@@ -1,9 +1,13 @@
 import datetime
+# from urllib import response
+import requests
+
 from django.core.mail import EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
+from django.urls import reverse
 import requests
 import json
 
@@ -152,16 +156,13 @@ def verify_payment(request):
 
             # Send order number and transaction id back to sendData method via JsonRedponse
 
-            data ={
-                'order_number': order.order_number,
-                'transID': payment.payment_id,
-            }
-            return JsonResponse(data)
-
             
+            # Construct the URL for the order_complete view with parameters
+            url = reverse('order_complete') + f'?order_number={order_number}&payment_id={payment.payment_id}'
+            # Redirect to the order_complete page
+            return redirect(url)
         else:
-            pass
-
+            return JsonResponse({'error': 'Payment verification failed'}, status=400)
     return redirect('dashboard')
 
 
@@ -231,4 +232,31 @@ def place_order(request, total=0, quantity=0):
     
     
 def order_complete(request):
-    return render(request, 'orders/order_complete.html')
+    order_number = request.GET.get('order_number')
+    transID = request.GET.get('payment_id')
+
+    try:
+        order = Order.objects.get(order_number= order_number, is_ordered=True)
+        ordered_products = OrderProduct.objects.filter(order_id= order.id)
+
+        subtotal = 0
+        for i in ordered_products:
+            subtotal += i.product_price * i.quantity
+
+        payment = Payment.objects.get(payment_id = transID) 
+
+        context = {
+        'order': order,
+        'ordered_products': ordered_products,
+        'order_number': order.order_number,
+        'transID': payment.payment_id,
+        'payment': payment,
+        'subtotal': subtotal,
+        
+        
+    }
+        return render(request, 'orders/order_complete.html', context)
+    except (Payment.DoesNotExist, Order.DoesNotExist):
+        return redirect('home')
+
+
