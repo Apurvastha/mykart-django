@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from orders.models import OrderProduct
 from store.forms import ReviewForm
-from .models import Product, ReviewRating
+from .models import Product, ProductGallery, ReviewRating
 from category.models import Category
 from carts.models import CartItem
 
@@ -64,6 +64,10 @@ def product_detail(request, category_slug, product_slug ):
     # get the reviews
 
    reviews = ReviewRating.objects.filter(product_id=single_product.id, status= True)
+
+   # get the product gallery
+
+   product_gallery = ProductGallery.objects.filter(product_id =single_product.id)
    
    
     
@@ -74,6 +78,7 @@ def product_detail(request, category_slug, product_slug ):
        'in_cart' : in_cart,
        'orderproduct' : orderproduct,
        'reviews' : reviews,
+       'product_gallery' : product_gallery,
    }
    return render(request,'store/product_detail.html', context)
 

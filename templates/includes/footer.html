@@ -21,4 +21,15 @@
 		</section>
 	</div><!-- //container -->
 </footer>
+<script src="jquery-3.7.1.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$('.thumb a').click(function(e){
+			e.preventDefault();
+			$('.mainImage img').attr('src', $(this).attr("href"));
+		})
+	})
+</script>
+</body>
+</html>
 
