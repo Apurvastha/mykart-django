@@ -3,6 +3,8 @@
 
 {% block content %}
 
+{% load static %}
+
 
 <section class="section-conten padding-y bg">
     
@@ -18,7 +20,11 @@
             </header>
             <div class="card-body">
               <div class="text-right">
-                <img src="{{userprofile.profile_picture.url}}" alt="profile picture" width="100" style="border-radius:50%;">
+                {% if userprofile.profile_picture %}
+                  <img src="{{ userprofile.profile_picture.url }}" alt="Profile Picture" width="50" height="50" style="border-radius:50%;>
+                {% else %}
+                  <img src="{% static 'images/default_profile_picture.jpg' %}" alt="Default Profile Picture" width="50" height="50" style="border-radius:50%;">
+                {% endif %}
               </div>
                 <div class="row"> 
                   <div class="col-md-12">

@@ -3,6 +3,7 @@
 
 {% block content %}
 
+{% load static %}
 
 <section class="section-conten padding-y bg">
     
@@ -27,11 +28,15 @@
                                 <a href="{% url 'my_orders'%}">View Orders</a>
                             </div>
                         </div>
-                    </div>
+                    </div>    
                  <div class="col-md-6">
                         <div class="card" style="text-align:center;">
                             <div class="card-body">
-                               <img src="{{userprofile.profile_picture.url}}" alt="User profile pic" width="50" height="50" style="border-radius:50%;">
+                                {% if userprofile.profile_picture %}
+                                    <img src="{{ userprofile.profile_picture.url }}" alt="Profile Picture" width="50" height="50" style="border-radius:50%;">
+                                {% else %}
+                                <img src="{% static 'images/default_profile_picture.jpg' %}" alt="Default Profile Picture" width="50" height="50" style="border-radius:50%;">
+                                {% endif %}
                                <p class="mb-0">{{user.email}}</p>
                                <p>{{user.phone_number}}</p>
                             </div>

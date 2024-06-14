@@ -1,5 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+
+
+
 
 # this method creates a user
 
@@ -83,12 +91,18 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=20, blank=True)
     state = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=20, blank=True)
-    profile_picture = models.ImageField(upload_to='userprofile', blank=True)
+    profile_picture = models.ImageField(upload_to='userprofile', default='images/default_profile_picture.jpg')
 
     def __str__(self):
         return self.user.first_name
     
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    
 
 

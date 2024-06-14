@@ -7,6 +7,7 @@ from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from .models import UserProfile
 
 #VERIFICATION EMAIL
 from django.contrib.sites.shortcuts import get_current_site
@@ -33,6 +34,9 @@ def register(request):
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
             user.phone_number = phone_number
             user.save()
+
+            # Create a UserProfile object
+            UserProfile.objects.create(user=user)
 
             #USER ACTIVATION
             current_site =get_current_site(request)
@@ -160,7 +164,11 @@ def dashboard(request):
     orders= Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
     orders_count = orders.count()
 
-    userprofile = UserProfile.objects.get(user_id= request.user.id)
+    # userprofile = UserProfile.objects.get(user_id= request.user.id)
+    try:
+        userprofile = UserProfile.objects.get(user_id=request.user.id)
+    except UserProfile.DoesNotExist:
+        userprofile = None
     context={
         'orders_count': orders_count,
         'userprofile': userprofile,

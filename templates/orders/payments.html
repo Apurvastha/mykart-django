@@ -16,12 +16,12 @@
             <div class="card">
                 <h5 class="card-header">Billing Address</h5>
                 <div class="card-body">
-                  <p class="card-text mb-0">{{order.full_name}}</p>
-                  <p class="card-text mb-0">{{order.full_address}}</p>
-                  <p class="card-text mb-0">{{order.city}}, {{ order.state}}</p>
-                  <p class="card-text mb-0">{{order.country}} </p>
-                  <p class="card-text mb-0">{{order.email}} </p>
-                  <p class="card-text mb-0">{{order.phone}} </p>
+                  <p class="card-text mb-0"><strong>Name:</strong>    {{order.full_name}}</p>
+                  <p class="card-text mb-0"><strong>Address:</strong> {{order.full_address}}</p>
+                  <p class="card-text mb-0"><strong>State:</strong> {{order.city}}, {{ order.state}}</p>
+                  <p class="card-text mb-0"><strong>Country:</strong> {{order.country}} </p>
+                  <p class="card-text mb-0"><strong>Email:</strong> {{order.email}} </p>
+                  <p class="card-text mb-0"><strong>Phone:</strong> {{order.phone}} </p>
                   {% if order.order_note %}
                     <b>Order Note:</b> {{order.order_note}}
                   {% endif %}
