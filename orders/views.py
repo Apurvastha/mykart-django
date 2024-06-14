@@ -56,7 +56,7 @@ def payments(request):
             }
         })
         headers = {
-            'Authorization': 'key f58207f6173d4159b46014b8009889b6',
+            'Authorization': 'key <YOUR_SECRET_KEY>',
             'Content-Type': 'application/json',
         }
 
@@ -76,7 +76,7 @@ def verify_payment(request):
 
     if request.method == 'GET':
         headers = {
-            'Authorization': 'key f58207f6173d4159b46014b8009889b6',
+            'Authorization': 'key <YOUR_SECRET_KEY>',
             'Content-Type': 'application/json',
         }
         pidx = request.GET.get('pidx')
