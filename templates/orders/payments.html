@@ -105,7 +105,7 @@
                     <img src="{% static "./images/misc/payments.png" %}" height="26">
                 </p>
 
-                
+                {% comment %} http://oddshoppe-env-1.eba-efp5vtya.us-east-1.elasticbeanstalk.com {% endcomment %}
                 <form action="{% url 'payments' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="purchase_order_id" value="{{ order.order_number }}">

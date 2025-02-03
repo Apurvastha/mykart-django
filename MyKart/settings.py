@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from django.views.decorators.csrf import csrf_exempt
 from decouple import config
+from os import getenv
 
 
 
@@ -26,12 +27,20 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = '2rh_ig1pj=$&wo^py2xyitpb)-e#2+*0@&08w_!6a0&4aj+%r-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG',cast=bool)
 
-ALLOWED_HOSTS = []
+# DEBUG = getenv("IS_DEVELOPMENT", True)
+DEBUG = True
+
+ALLOWED_HOSTS = [
+   
+
+    
+]
+# getenv("APP_HOST")
+
 
 
 # Application definition
@@ -54,7 +63,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'MyKart.middlewares.AdminSessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -154,10 +162,6 @@ STATICFILES_DIRS =[
     'MyKart/static'
 ]
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
-
 # media files configuration
 
 MEDIA_URL = '/media/'
@@ -172,11 +176,11 @@ MESSAGE_TAGS = {
 
 #SMTP CONFIGURATION
 
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'thacres.tc@gmail.com'
+EMAIL_HOST_PASSWORD = 'pcbw hptt nhno qpac'
+EMAIL_USE_TLS = 'True'
 
 
 # # settings.py
